@@ -23,6 +23,7 @@ SECTION 3: NOTES
 3. Leaving the same app.py running allows you to leave and re-enter the webpage and have the same stocks (you'll just come back to where you left off).
 4. it's still in development so tell me if and when something goes wrong
 5. If you're worried about the number of request you're using, check the terminal to see
+6. IF NOTHING FIXES IT, DELETE THE __pycache__ FOLDER
 
 SECTION 4: BUGS
 1. values inaccurate after leaving and coming back to webpage

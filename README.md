@@ -2,7 +2,7 @@
 To my good friend Jonny, how to use the code.
 
 SECTION 1: RUNNING THE CODE
-1. Download the trading-simulator folder from the google drive and save it to your desktop
+1. Download this by pressing the green code button, then press download zip. unzip it and save it to your desktop.
 2. install requests. go to terminal and write "pip3 install requests"
 3. install flask. go to terminal and write "pip3 install flask"
 4. open a terminal window with the directory of the trading-simulator folder. Right click the folder and select "New Terminal at Folder"

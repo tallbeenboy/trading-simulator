@@ -1,6 +1,7 @@
 import requests
 import yfinance as yf
 import json
+import copy
 from flask import Flask, render_template, request, redirect,jsonify
 
 app = Flask(__name__)
@@ -28,7 +29,7 @@ def get_price(symbol):
 
     response = requests.get(url)
     data = response.json()
-    print(data)
+    #print(data)
     price = data['c']
 
     return price
@@ -52,6 +53,9 @@ def gen_rows(owned):
         current_price=get_price(stock["symbol"])
         existing=False
         for row in rows:
+            if stock["shares"]==0:
+                break
+
             if stock["symbol"] in row.values():
                 existing=True
                 row["shares"]+=stock["shares"]
@@ -60,8 +64,10 @@ def gen_rows(owned):
                 row["currentvalue"]+=round(current_price*stock["shares"],2)
                 row["gain"]+=round((current_price*stock["shares"])-(stock["buyprice"]*stock["shares"]),2)
                 break
-        if not existing:
-            rows.append({"symbol":stock["symbol"],"shares":stock["shares"],"totalinvestment":stock["shares"]*stock["buyprice"],"currentprice":current_price,"currentvalue":round(float(current_price*float(stock["shares"])),2),"gain":round((current_price*stock["shares"])-(stock["buyprice"]*stock["shares"]),2)})
+
+        if stock["shares"]!=0:
+            if not existing:
+                rows.append({"symbol":stock["symbol"],"shares":stock["shares"],"totalinvestment":stock["shares"]*stock["buyprice"],"currentprice":current_price,"currentvalue":round(float(current_price*float(stock["shares"])),2),"gain":round((current_price*stock["shares"])-(stock["buyprice"]*stock["shares"]),2)})
 
     return rows
 
@@ -69,7 +75,7 @@ def stockvalue():
     r=gen_rows(owned)
     value=0
     for stock in r:
-        value+=stock["currentvalue"]
+        value+=round(stock["currentvalue"],2)
 
     return value
 
@@ -91,14 +97,20 @@ def buy():
     global cash
     data=request.get_json()
     symbol=data.get("symbol","").upper().strip()
-    shares=data.get("shares","").upper().strip()
+    shares=int(data.get("shares","").upper().strip())
 
     price=get_price(symbol)
 
+    if shares<1:
+        return jsonify("failed transaction: invalid shares")
+
+    if price-0==0:  
+        return jsonify("failed transaction: symbol doesn't exist")
+
     if price*float(shares)<=cash:
-        print(symbol,price)
+        #print(symbol,price)
         owned.append({"symbol":symbol,"buyprice":round(float(price),2),"shares":round(float(shares),2)})
-        print(owned)
+        #print(owned)
         cash-=float(price)*float(shares)
         return jsonify(f"successful transaction (${round(float(price)*float(shares),2)})")
     else:
@@ -116,7 +128,11 @@ def sell():
     data=request.get_json()
     symbol=data.get("symbol","").upper().strip()
     shares=int(data.get("shares","").upper().strip())
+    old_owned=copy.deepcopy(owned)
     
+    if shares<1:
+        return jsonify("failed transaction: invalid shares")
+
     subtracted=0
     for stock in owned:
         if stock["symbol"]==symbol:
@@ -129,6 +145,10 @@ def sell():
 
         if subtracted==shares:
             break
+
+    if subtracted<shares:
+        owned=old_owned
+        return jsonify("transaction failed: you don't own enough shares")
 
     
     diff=shares*get_price(symbol)

@@ -1,5 +1,4 @@
 # trading-simulator
-To my good friend Jonny, how to use the code.
 
 SECTION 1: RUNNING THE CODE
 1. Download this by pressing the green code button, then press download zip. unzip it and save it to your desktop.
@@ -27,8 +26,10 @@ SECTION 3: NOTES
 
 SECTION 4: BUGS
 1. values inaccurate after leaving and coming back to webpage
-2. you can sell more shares then you own
-3. buying negative shares (it just acts as selling)
-4. buying stock that doesn't exist
+2. you can sell more shares then you own*
+3. buying negative shares (it just acts as selling)*
+4. buying stock that doesn't exist*
+
+*resolved
 
 Have fun!

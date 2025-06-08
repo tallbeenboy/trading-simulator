@@ -1,5 +1,4 @@
 import requests
-import yfinance as yf
 import json
 import copy
 from flask import Flask, render_template, request, redirect,jsonify
@@ -97,7 +96,7 @@ def buy():
     global cash
     data=request.get_json()
     symbol=data.get("symbol","").upper().strip()
-    shares=int(data.get("shares","").upper().strip())
+    shares=float(data.get("shares","").upper().strip())
 
     price=get_price(symbol)
 
@@ -127,7 +126,7 @@ def sell():
     global owned,stockV,cash
     data=request.get_json()
     symbol=data.get("symbol","").upper().strip()
-    shares=int(data.get("shares","").upper().strip())
+    shares=float(data.get("shares","").upper().strip())
     old_owned=copy.deepcopy(owned)
     
     if shares<1:
